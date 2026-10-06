@@ -16,12 +16,35 @@ variable "vpc_cidr" {
   default     = "10.0.0.0/16"
 }
 
-variable "ami_id" {
-  description = "Amazon Linux 2023 x86_64 AMI ID in the configured AWS region"
-  type        = string
+variable "availability_zones" {
+  description = "Availability zones for the public and private subnets"
+  type        = list(string)
+  default     = ["ap-southeast-1a", "ap-southeast-1b"]
 
   validation {
-    condition     = can(regex("^ami-([0-9a-f]{8}|[0-9a-f]{17})$", var.ami_id))
-    error_message = "ami_id must be a valid-format AMI ID (ami- followed by 8 or 17 lowercase hexadecimal characters)."
+    condition     = length(var.availability_zones) == 2
+    error_message = "Exactly two availability zones must be provided."
+  }
+}
+
+variable "public_subnet_cidrs" {
+  description = "CIDR blocks for the public subnets"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
+
+  validation {
+    condition     = length(var.public_subnet_cidrs) == 2
+    error_message = "Exactly two public subnet CIDR blocks must be provided."
+  }
+}
+
+variable "private_subnet_cidrs" {
+  description = "CIDR blocks for the private subnets"
+  type        = list(string)
+  default     = ["10.0.10.0/24", "10.0.11.0/24"]
+
+  validation {
+    condition     = length(var.private_subnet_cidrs) == 2
+    error_message = "Exactly two private subnet CIDR blocks must be provided."
   }
 }
